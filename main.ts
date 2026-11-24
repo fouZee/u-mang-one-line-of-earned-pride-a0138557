@@ -4,16 +4,19 @@
 // /output/entry.txt for the judge to compare head-to-head against other lines.
 //
 // The line: a night-bus driver who never learned to swim teaches his
-// daughter to float, and stands waist-deep in the water until she lets go
-// of his hand. A concrete scene with a real person, a hard thing done for
-// someone else, and the pride lands in the last words — her letting go is
-// the proof his effort worked.
+// daughter to float, and stands waist-deep holding her until, at last,
+// she lets go of his hand. A concrete scene with a real person, a hard
+// thing done for someone else, and the pride lands in the last words —
+// her letting go is the proof his effort worked. The revision sharpens
+// the first draft: "holding her" puts his hands on her instead of the
+// filler "in the water", and "at last" marks the long effort finally
+// landing, so the ending carries the pride instead of just reporting it.
 //
 // Deterministic, no network, no dependencies, no secrets.
 import { mkdirSync, writeFileSync } from "node:fs";
 
 const LINE =
-  "The night-bus driver who never learned to swim taught his daughter to float, and stood waist-deep in the water until she let go of his hand.";
+  "The night-bus driver who never learned to swim taught his daughter to float, and stood waist-deep holding her until, at last, she let go of his hand.";
 
 const text = LINE.trim();
 
@@ -30,6 +33,22 @@ if ((text.match(/\./g) ?? []).length !== 1 || !text.endsWith(".")) {
 }
 if (/[\r\n]/.test(text)) {
   throw new Error("entry must be a single line");
+}
+// The brief rewards freshness: reject the stock pride phrases outright,
+// so the line has to earn its feeling from the scene instead of announcing it.
+const CLICHES = [
+  "never gave up",
+  "dream came true",
+  "against all odds",
+  "champion",
+  "trophy",
+  "proudest moment",
+];
+const hit = CLICHES.find((phrase) =>
+  text.toLowerCase().includes(phrase),
+);
+if (hit) {
+  throw new Error(`entry must avoid stock pride phrases, found: ${hit}`);
 }
 
 mkdirSync("/output", { recursive: true });
